@@ -1,0 +1,24 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+
+# AI Weights
+*.pt
+*.onnx
+*.engine
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store
+
+# Data
+data/processed/
+runs/
