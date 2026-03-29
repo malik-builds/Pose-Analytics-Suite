@@ -13,31 +13,65 @@ A professional, real-time computer vision application that monitors human poses 
 - **Ultralytics YOLOv11** (Pose Model)
 - **OpenCV** (Vision processing)
 - **PyTorch** (Inference engine)
+- **Flask + Flask-SocketIO** (Web UI / real-time streaming)
 
 ## Repository Structure
 ```text
-Object_Detection/
+Pose-Analytics-Suite/
 ├── src/
-│   ├── detector.py   # AI Logic & Pose Analytics
-│   └── vision.py     # Stream Handling & FPS Utilities
-├── main.py           # Application Entry Point
-└── .gitignore        # Standards-compliant ignores
+│   ├── detector.py      # AI Logic & Pose Analytics
+│   └── vision.py        # Stream Handling & FPS Utilities
+├── templates/
+│   └── index.html       # Web UI (webcam + live feed)
+├── app.py               # Flask + SocketIO Web Server
+├── main.py              # CLI Entry Point
+├── requirements.txt     # Python dependencies
+├── Dockerfile           # Container image
+├── docker-compose.yml   # Compose service
+└── .gitignore
 ```
 
 ## Quick Start
 
+### CLI (local webcam + OpenCV window)
+
 1. **Install Dependencies:**
    ```bash
-   pip install ultralytics opencv-python torch
+   pip install -r requirements.txt
    ```
 
-2. **Run the Suite:**
+2. **Run:**
    ```bash
    python main.py
    ```
 
 3. **Try the Demo:**
    Raise both hands above your head while in front of the camera to trigger the **Terminal Alert**.
+
+### Web UI (browser webcam + real-time feed)
+
+1. **Install Dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Run the Flask server:**
+   ```bash
+   python app.py
+   ```
+
+3. **Open** `http://localhost:5000` in your browser and allow camera access.
+   The annotated feed and live "Hands Raised: YES / NO" status will appear.
+
+### Docker
+
+```bash
+docker compose up --build
+```
+
+Then open `http://localhost:5000`.
+
+> **Note:** The Docker build pre-downloads the YOLO model (~6MB), so the first request is instant. Expect a ~2-3GB image due to PyTorch.
 
 ## 📄 License & Attribution
 - Built with [Ultralytics YOLO](https://github.com/ultralytics/ultralytics).
