@@ -17,6 +17,6 @@ COPY . .
 # Pre-download YOLO model weights so first request is instant
 RUN python -c "from ultralytics import YOLO; YOLO('yolo11n-pose.pt')"
 
-EXPOSE 5000
+EXPOSE 5001
 
 CMD ["python", "app.py"]
