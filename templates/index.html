@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pose Analytics Suite</title>
+  <style>
+    body { font-family: monospace; background: #111; color: #eee; text-align: center; padding: 20px; }
+    h1 { margin-bottom: 16px; }
+    #feed { width: 640px; max-width: 100%; border: 2px solid #444; background: #000; }
+    #status { font-size: 1.4rem; margin-top: 12px; }
+    #status.yes { color: #4caf50; }
+    #status.no  { color: #f44336; }
+  </style>
+</head>
+<body>
+  <h1>Pose Analytics Suite</h1>
+
+  <!-- hidden elements used to capture webcam frames -->
+  <video id="webcam" autoplay playsinline style="display:none"></video>
+  <canvas id="canvas" style="display:none"></canvas>
+
+  <!-- annotated feed returned from the server -->
+  <img id="feed" src="" alt="Waiting for camera..." width="640">
+
+  <p id="status" class="no">Hands Raised: NO</p>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+    const video  = document.getElementById('webcam');
+    const canvas = document.getElementById('canvas');
+    const feed   = document.getElementById('feed');
+    const status = document.getElementById('status');
+    const socket = io();
+
+    let busy = false;
+
+    // Start webcam
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+        video.onloadedmetadata = () => {
+          canvas.width  = video.videoWidth;
+          canvas.height = video.videoHeight;
+          sendFrame();
+        };
+      })
+      .catch(err => {
+        status.textContent = 'Camera error: ' + err.message;
+      });
+
+    function sendFrame() {
+      if (!busy) {
+        busy = true;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        socket.emit('frame', dataUrl);
+      }
+      requestAnimationFrame(sendFrame);
+    }
+
+    socket.on('response', data => {
+      feed.src = data.image;
+      const raised = data.hands_raised;
+      status.textContent = 'Hands Raised: ' + (raised ? 'YES' : 'NO');
+      status.className   = raised ? 'yes' : 'no';
+      busy = false;
+    });
+  </script>
+</body>
+</html>
