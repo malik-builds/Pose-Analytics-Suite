@@ -1,0 +1,9 @@
+.git
+__pycache__
+*.pyc
+.venv
+venv
+runs/
+.DS_Store
+.vscode
+.idea
